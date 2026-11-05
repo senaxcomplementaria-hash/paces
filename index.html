@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retratos y Relatos en Clave de Paces</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Librería para convertir HTML a Imagen (Descarga) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #c7bca5;
+            --accent-color: #d35400;
+            --paper-color: #fffdf8;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- LA IMAGEN COMO EJE CENTRAL --- */
+        .hero-image-container {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            margin-top: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            background-color: #fff;
+            border: 10px solid #fff;
+            border-bottom: 40px solid #fff;
+            transform: rotate(-1deg);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-image-container:hover {
+            transform: rotate(0deg);
+        }
+
+        .hero-image-container img {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        #fallbackMessage {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #eee;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #fallbackMessage p {
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* --- ZONA DE INTERACCIÓN --- */
+        .interaction-zone {
+            width: 90%;
+            max-width: 550px;
+            margin-top: 30px;
+            margin-bottom: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Botón Cámara */
+        .btn-photo {
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 3px 5px 10px rgba(0,0,0,0.2);
+            transform: rotate(1.5deg);
+            border: 2px dashed rgba(255,255,255,0.6);
+        }
+
+        .btn-photo input[type="file"] {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer;
+        }
+
+        /* Contenedor del Relato */
+        .relato-container {
+            background-color: #fcf3cf;
+            padding: 25px 20px;
+            box-shadow: 2px 5px 15px rgba(0,0,0,0.2);
+            transform: rotate(-1deg);
+            position: relative;
+        }
+
+        .relato-container::before {
+            content: '';
+            position: absolute;
+            top: -12px; left: 50%; transform: translateX(-50%);
+            width: 110px; height: 35px;
+            background-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px dashed #b7950b;
+            font-family: 'Kalam', cursive;
+            font-size: 1.4rem;
+            color: #333;
+            resize: none;
+            box-sizing: border-box;
+        }
+
+        textarea:focus { outline: none; border-bottom: 2px solid #b7950b; }
+
+        .btn-generar {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 3px 5px 10px rgba(0,0,0,0.2);
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        /* Previsualización foto usuario */
+        .user-photo-preview {
+            display: none;
+            background: white;
+            padding: 10px 10px 40px 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transform: rotate(2deg);
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .user-photo-preview img {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+        }
+
+        /* --- TARJETA FINAL (Lo que se va a descargar) --- */
+        .result-container {
+            display: none; /* Se oculta hasta generar */
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 50px;
+        }
+
+        .result-card {
+            background-color: white;
+            padding: 15px 15px 50px 15px; /* Espacio extra abajo para el texto */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            margin-top: 30px;
+            transform: rotate(-2deg);
+            position: relative;
+            width: 90%;
+            max-width: 500px;
+            box-sizing: border-box;
+        }
+        
+        .result-card::after {
+             content: '❤️ Exposición "Clave de Paces"';
+             position: absolute;
+             bottom: 15px; right: 20px;
+             font-family: 'Kalam', cursive;
+             color: var(--accent-color);
+             font-size: 1rem;
+        }
+
+        .result-card img { 
+            width: 100%; 
+            border-radius: 2px; 
+            margin-bottom: 15px; 
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .result-text {
+            font-family: 'Kalam', cursive;
+            font-size: 1.6rem;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 0 10px;
+            word-wrap: break-word;
+        }
+
+        /* Botón de Descarga */
+        .btn-descargar {
+            background-color: #27ae60; /* Verde */
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px; /* Bordes redondeados tipo píldora */
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.2s;
+        }
+
+        .btn-descargar:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LA IMAGEN (EJE CENTRAL) -->
+    <div class="hero-image-container">
+        <img src="img/paces1.jpg" id="mainAfiche" alt="Afiche Exposición" onerror="mostrarRespaldo()">
+        
+        <div id="fallbackMessage">
+            <p>No se encontró 'afiche.jpg'.<br>Selecciona la imagen desde tu dispositivo:</p>
+            <input type="file" accept="image/*" onchange="cargarAficheManual(event)" style="margin-top: 10px; padding: 10px; background: #ccc; border-radius: 5px;">
+        </div>
+    </div>
+
+    <!-- 2. ZONA DE INTERACCIÓN -->
+    <div class="interaction-zone" id="zonaInteraccion">
+        
+        <!-- Botón Cámara -->
+        <label class="btn-photo">
+            📸 Toma tu foto o sube una imagen
+            <input type="file" accept="image/*" capture="environment" id="cameraInput" onchange="previewImage(event)">
+        </label>
+
+        <!-- Previsualización -->
+        <div class="user-photo-preview" id="previewContainer">
+            <img id="imagePreview" src="" alt="Tu foto">
+        </div>
+
+        <!-- Relato -->
+        <div class="relato-container">
+            <label style="font-family: 'Kalam', cursive; font-size: 1.3rem; color: #b7950b; font-weight: bold;">Escribe tu relato de paz:</label>
+            <textarea id="relatoInput" placeholder="¿Qué paz cotidiana representa esta imagen para ti?"></textarea>
+            
+            <button class="btn-generar" onclick="generarRelato()">✨ Crear mi Relato</button>
+        </div>
+
+    </div>
+
+    <!-- 3. TARJETA FINAL Y BOTÓN DE DESCARGA -->
+    <div class="result-container" id="resultContainer">
+        <!-- Este div es el que se convierte en imagen -->
+        <div class="result-card" id="resultCard">
+            <img id="finalImage" src="" alt="Foto final">
+            <p class="result-text" id="finalText"></p>
+        </div>
+        
+        <!-- Botón para descargar -->
+        <button class="btn-descargar" onclick="descargarImagen()">
+            📥 Descargar mi imagen
+        </button>
+    </div>
+
+    <script>
+        // --- Lógica del Afiche Principal ---
+        function mostrarRespaldo() {
+            document.getElementById('fallbackMessage').style.display = 'flex';
+        }
+
+        function cargarAficheManual(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('mainAfiche').src = e.target.result;
+                    document.getElementById('fallbackMessage').style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // --- Lógica de la Foto del Usuario ---
+        function previewImage(event) {
+            const input = event.target;
+            const previewContainer = document.getElementById('previewContainer');
+            const imagePreview = document.getElementById('imagePreview');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                    previewContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // --- Generar la Tarjeta ---
+        function generarRelato() {
+            const imagePreview = document.getElementById('imagePreview');
+            const relatoText = document.getElementById('relatoInput').value.trim();
+            
+            const resultContainer = document.getElementById('resultContainer');
+            const finalImage = document.getElementById('finalImage');
+            const finalText = document.getElementById('finalText');
+
+            if (imagePreview.src === "" || document.getElementById('previewContainer').style.display === "none") {
+                alert("Por favor, primero toma o sube una foto.");
+                return;
+            }
+
+            if (relatoText === "") {
+                alert("Por favor, escribe un pequeño relato sobre tu foto.");
+                return;
+            }
+
+            finalImage.src = imagePreview.src;
+            finalText.textContent = '"' + relatoText + '"';
+
+            // Mostrar el contenedor final
+            resultContainer.style.display = 'flex';
+            
+            // Ocultar la zona de interacción para que solo se vea el resultado
+            // document.getElementById('zonaInteraccion').style.display = 'none'; 
+            
+            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // --- Función para Descargar la Imagen ---
+        function descargarImagen() {
+            const tarjeta = document.getElementById('resultCard');
+            const boton = document.querySelector('.btn-descargar');
+            
+            // Cambiar texto del botón temporalmente
+            const textoOriginal = boton.innerHTML;
+            boton.innerHTML = "⏳ Procesando...";
+
+            // html2canvas convierte el HTML en un lienzo (canvas)
+            // scale: 2 hace que la imagen descargada tenga buena resolución
+            html2canvas(tarjeta, { scale: 2, backgroundColor: "#ffffff", useCORS: true }).then(canvas => {
+                // Convertir el lienzo a una URL de imagen (PNG)
+                const imageURL = canvas.toDataURL("image/png");
+                
+                // Crear un enlace invisible para forzar la descarga
+                const enlaceDescarga = document.createElement('a');
+                enlaceDescarga.href = imageURL;
+                // Nombre del archivo
+                enlaceDescarga.download = 'Mi_Relato_de_Paz.png'; 
+                
+                // Simular clic en el enlace
+                document.body.appendChild(enlaceDescarga);
+                enlaceDescarga.click();
+                document.body.removeChild(enlaceDescarga);
+
+                // Restaurar el botón
+                boton.innerHTML = textoOriginal;
+            }).catch(err => {
+                console.error("Error al generar la imagen: ", err);
+                alert("Hubo un error al descargar la imagen. Intenta de nuevo.");
+                boton.innerHTML = textoOriginal;
+            });
+        }
+    </script>
+</body>
+</html>

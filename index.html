@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retratos y Relatos en Clave de Paces</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Kalam:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #c7bca5;
+            /* Color base tipo corcho/mesa */
+            --accent-color: #d35400;
+            /* Color naranja de las letras de la imagen */
+            --paper-color: #fffdf8;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- LA IMAGEN COMO EJE CENTRAL --- */
+        .hero-image-container {
+            width: 100%;
+            max-width: 600px;
+            /* Se adapta al celular y no se hace gigante en PC */
+            position: relative;
+            margin-top: 15px;
+            /* Sombra para que resalte como un objeto real */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            background-color: #fff;
+            border: 10px solid #fff;
+            /* Marco blanco tipo foto */
+            border-bottom: 40px solid #fff;
+            /* Espacio inferior tipo polaroid */
+            transform: rotate(-1deg);
+            /* Ligera inclinación */
+            transition: transform 0.3s ease;
+        }
+
+        .hero-image-container:hover {
+            transform: rotate(0deg);
+        }
+
+        .hero-image-container img {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        /* Mensaje de respaldo si la imagen no carga */
+        #fallbackMessage {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #eee;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #fallbackMessage p {
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* --- ZONA DE INTERACCIÓN --- */
+        .interaction-zone {
+            width: 90%;
+            max-width: 550px;
+            margin-top: 30px;
+            margin-bottom: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Botón Cámara (Estilo etiqueta pegada) */
+        .btn-photo {
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.2);
+            transform: rotate(1.5deg);
+            border: 2px dashed rgba(255, 255, 255, 0.6);
+        }
+
+        .btn-photo input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Contenedor del Relato (Estilo Post-it) */
+        .relato-container {
+            background-color: #fcf3cf;
+            /* Amarillo post-it */
+            padding: 25px 20px;
+            box-shadow: 2px 5px 15px rgba(0, 0, 0, 0.2);
+            transform: rotate(-1deg);
+            position: relative;
+        }
+
+        /* Cinta adhesiva */
+        .relato-container::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: 35px;
+            background-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px dashed #b7950b;
+            font-family: 'Kalam', cursive;
+            font-size: 1.4rem;
+            color: #333;
+            resize: none;
+            box-sizing: border-box;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-bottom: 2px solid #b7950b;
+        }
+
+        .btn-generar {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 3px 5px 10px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        /* --- PREVISUALIZACIÓN DE LA FOTO DEL USUARIO --- */
+        .user-photo-preview {
+            display: none;
+            background: white;
+            padding: 10px 10px 40px 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transform: rotate(2deg);
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .user-photo-preview img {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+        }
+
+        /* --- TARJETA FINAL --- */
+        .result-card {
+            display: none;
+            background-color: white;
+            padding: 15px 15px 40px 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            margin-top: 30px;
+            transform: rotate(-2deg);
+            position: relative;
+            width: 90%;
+            max-width: 500px;
+            margin-bottom: 50px;
+        }
+
+        .result-card::after {
+            content: '❤️ Paz';
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-family: 'Kalam', cursive;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+
+        .result-card img {
+            width: 100%;
+            border-radius: 2px;
+            margin-bottom: 15px;
+        }
+
+        .result-text {
+            font-family: 'Kalam', cursive;
+            font-size: 1.5rem;
+            color: #333;
+            text-align: center;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 1. LA IMAGEN (EJE CENTRAL) -->
+    <div class="hero-image-container">
+        <!-- Aquí se carga la imagen. Si falla, se muestra el botón de respaldo -->
+        <img src="paces1.jpg" id="mainAfiche" alt="Afiche Exposición" onerror="mostrarRespaldo()">
+
+        <!-- Sistema de respaldo por si no encuentran el archivo local -->
+        <div id="fallbackMessage">
+            <p>No se encontró el archivo 'afiche.jpg'.<br>Por favor, selecciónalo desde tu dispositivo:</p>
+            <input type="file" accept="image/*" onchange="cargarAficheManual(event)"
+                style="margin-top: 10px; padding: 10px; background: #ccc; border-radius: 5px;">
+        </div>
+    </div>
+
+    <!-- 2. ZONA DE INTERACCIÓN -->
+    <div class="interaction-zone" id="zonaInteraccion">
+
+        <!-- Botón Cámara -->
+        <label class="btn-photo">
+            📸 Toma tu foto o sube una imagen
+            <input type="file" accept="image/*" capture="environment" id="cameraInput" onchange="previewImage(event)">
+        </label>
+
+        <!-- Previsualización de la foto del usuario -->
+        <div class="user-photo-preview" id="previewContainer">
+            <img id="imagePreview" src="" alt="Tu foto">
+        </div>
+
+        <!-- Nota adhesiva para el relato -->
+        <div class="relato-container">
+            <label style="font-family: 'Kalam', cursive; font-size: 1.3rem; color: #b7950b; font-weight: bold;">Escribe
+                tu relato de paz:</label>
+            <textarea id="relatoInput" placeholder="¿Qué paz cotidiana representa esta imagen para ti?"></textarea>
+
+            <button class="btn-generar" onclick="generarRelato()">✨ Crear mi Relato</button>
+        </div>
+
+    </div>
+
+    <!-- 3. TARJETA FINAL -->
+    <div class="result-card" id="resultCard">
+        <img id="finalImage" src="" alt="Foto final">
+        <p class="result-text" id="finalText"></p>
+        <p style="font-size: 0.8rem; color: #888; text-align: center; margin-top: 20px;">Muestra esta tarjeta a los
+            organizadores.</p>
+    </div>
+
+    <script>
+        // 1. Función de respaldo para cargar el afiche principal manualmente
+        function mostrarRespaldo() {
+            document.getElementById('fallbackMessage').style.display = 'flex';
+        }
+
+        function cargarAficheManual(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('mainAfiche').src = e.target.result;
+                    document.getElementById('fallbackMessage').style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 2. Función para mostrar la foto tomada por el usuario
+        function previewImage(event) {
+            const input = event.target;
+            const previewContainer = document.getElementById('previewContainer');
+            const imagePreview = document.getElementById('imagePreview');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                    // Hacer scroll suave hacia la foto
+                    previewContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // 3. Función para juntar foto y texto en la tarjeta final
+        function generarRelato() {
+            const imagePreview = document.getElementById('imagePreview');
+            const relatoText = document.getElementById('relatoInput').value.trim();
+
+            const resultCard = document.getElementById('resultCard');
+            const finalImage = document.getElementById('finalImage');
+            const finalText = document.getElementById('finalText');
+
+            // Validar que exista una foto
+            if (imagePreview.src === "" || document.getElementById('previewContainer').style.display === "none") {
+                alert("Por favor, primero toma o sube una foto.");
+                return;
+            }
+
+            // Validar que exista texto
+            if (relatoText === "") {
+                alert("Por favor, escribe un pequeño relato sobre tu foto.");
+                return;
+            }
+
+            // Transferir datos
+            finalImage.src = imagePreview.src;
+            finalText.textContent = '"' + relatoText + '"';
+
+            // Mostrar tarjeta final y ocultar zona de interacción para limpiar la vista
+            resultCard.style.display = 'block';
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    </script>
+</body>
+
+</html>

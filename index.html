@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retratos y Relatos en Clave de Paces</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+        }
+
+        .dark-glass {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+    <!-- Header Optimizado para TV -->
+    <header class="w-full py-5 px-10 border-b border-slate-800 flex justify-between items-center bg-slate-900/80 sticky top-0 z-50">
+        <div class="flex items-center space-x-4">
+            <span class="bg-emerald-500 text-slate-950 text-sm font-bold px-4 py-1.5 rounded-full uppercase tracking-wider">SENA</span>
+            <h1 class="text-2xl lg:text-3xl font-extrabold tracking-tight text-white">Retratos y Relatos en Clave de Paces</h1>
+        </div>
+        <div class="text-sm lg:text-base text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 rounded-xl text-center">
+            Imágenes y palabras de paz en la cotidianidad
+        </div>
+    </header>
+
+    <!-- Main Content / Slideshow Container Optimizado para TV (Pantalla Completa / Gran Formato) -->
+    <main class="flex-grow flex items-center justify-center p-4 lg:p-8">
+        <div class="w-full max-w-[96%] xl:max-w-[92%] bg-slate-900/95 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[78vh] lg:min-h-[82vh]">
+            
+            <!-- Left Side: Main Image Focus (Ocupa 7 columnas generosas para la foto en TV) -->
+            <div class="lg:col-span-7 bg-slate-950 relative flex flex-col items-center justify-center p-6 lg:p-10 group">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent z-10 pointer-events-none"></div>
+                <img id="slide-image" src="" alt="Fotografía de la exposición" class="max-h-[72vh] w-auto max-w-full object-contain rounded-2xl shadow-2xl transition-transform duration-500 z-20">
+                <div class="absolute bottom-8 left-8 right-8 z-30 pointer-events-none">
+                    <span id="slide-formation" class="inline-block bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 text-sm font-semibold px-4 py-1.5 rounded-full mb-3 shadow-md"></span>
+                    <h2 id="slide-title" class="text-3xl lg:text-4xl font-extrabold text-white leading-tight drop-shadow-md"></h2>
+                    <p id="slide-author" class="text-slate-200 text-lg mt-2 font-medium drop-shadow"></p>
+                </div>
+            </div>
+
+            <!-- Right Side: Description and Controls (Ocupa 5 columnas con tipografía grande y espaciosa para lectura en TV) -->
+            <div class="lg:col-span-5 p-8 lg:p-12 flex flex-col justify-between bg-slate-900/70">
+                <div>
+                    <div class="flex items-center justify-between mb-8 pb-4 border-b border-slate-800">
+                        <span class="text-sm font-mono uppercase tracking-widest text-emerald-400 font-semibold">Relato de la Obra</span>
+                        <span id="slide-counter" class="text-sm font-mono text-slate-300 bg-slate-800 px-3 py-1 rounded-lg">1 / 14</span>
+                    </div>
+                    <div class="prose prose-invert max-h-[50vh] overflow-y-auto pr-4 custom-scrollbar">
+                        <p id="slide-story" class="text-slate-200 text-base lg:text-lg leading-relaxed whitespace-pre-line font-light"></p>
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="pt-6 mt-6 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4">
+                    <button onclick="prevSlide()" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-6 py-3 rounded-2xl transition flex items-center space-x-2 text-base shadow-lg cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span>Anterior</span>
+                    </button>
+
+                    <div class="hidden xl:flex space-x-2 items-center" id="dots-container">
+                        <!-- Dots injected dynamically -->
+                    </div>
+
+                    <button onclick="nextSlide()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-6 py-3 rounded-2xl transition flex items-center space-x-2 text-base shadow-lg cursor-pointer">
+                        <span>Siguiente</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-5 text-center text-sm text-slate-400 border-t border-slate-800 bg-slate-950">
+        Centro de Procesos Industriales y Construcción - SENA Caldas
+    </footer>
+
+    <script>
+        const slides = [
+            {
+                name: "Andres Felipe Castaño López",
+                formation: "Análisis y Desarrollo de Software",
+                title: "A la espera de nuevos comienzos",
+                story: "La paz no siempre comienza con grandes acontecimientos; a veces nace en el silencio, en una pausa o en la oportunidad de pensar en aquello que podemos cambiar.\n\nEn aquel lugar, mientras el cielo permanecía nublado y la lluvia amenazaba con llegar, una persona observaba en silencio. Era un espacio tranquilo que parecía guardar la esperanza de un futuro diferente.\n\nA veces, la vida nos enfrenta a momentos difíciles, donde las diferencias, los desacuerdos y las heridas parecen alejarnos unos de otros. Sin embargo, siempre existe la posibilidad de detenernos, reflexionar y encontrar nuevos caminos para seguir adelante.\n\nCon el paso del tiempo, las pequeñas acciones pueden transformar grandes realidades. Una conversación puede sanar una diferencia, un gesto de solidaridad puede devolver la esperanza y una oportunidad puede cambiar el rumbo de una historia.\n\nQuizás aquel día no sería diferente para el mundo, pero sí podría ser el comienzo de algo nuevo para quienes decidieran dejar atrás sus rencores y construir un futuro basado en el respeto y la comprensión.\n\nPorque incluso después de los días más grises, siempre existe la posibilidad de volver a empezar.\n\nEstamos a la espera de nuevos comienzos, pero la paz no tiene que esperar: podemos empezar a construirla desde hoy.",
+                image: "img/Imagen1.jpg"
+            },
+            {
+                name: "Pablo C Cifuentes",
+                formation: "Coordinador Sistemas Integrados de Gestión",
+                title: "Entre el cielo y la tierra",
+                story: "Porque entre el cielo que nos inspira y la tierra que nos sostiene, existe un espacio sagrado donde ocurre la verdadera transformación: Nuestro propio ser.",
+                image: "img/Imagen2.jpg"
+            },
+            {
+                name: "Mariana Galindo",
+                formation: "Sistemas Integrados de Gestión",
+                title: "El camino de la resiliencia",
+                story: "Para mí transmite paz, tranquilidad y conocimiento. Es donde paso la mayor parte del tiempo estudiando, y cada vez que lo recorro me recuerda mi proceso de crecimiento.\n\nEl camino largo y techado representa la resiliencia, avanzar paso a paso, aunque cueste. Y el jardín con las flores y el cielo abierto me da calma cuando estoy estresada.\n\nEs más que un pasillo, es parte de mi crecimiento personal en el SENA.",
+                image: "img/Imagen3.jpg"
+            },
+            {
+                name: "Alejandro Ospina Vargas",
+                formation: "Automotriz",
+                title: "En Busca de Paz",
+                story: "Durante una actividad grupal en la noche, un grupo de compañeros se encontraba reunido cerca de unas rocas. Mientras compartían, algunos comenzaron a discutir porque tenían diferentes opiniones sobre cómo realizar la actividad.\n\nAl ver que la situación se estaba complicando, uno de los compañeros decidió intervenir. Les pidió que se tranquilizaran, escuchó las opiniones de todos y propuso que buscaran una solución entre todos, sin necesidad de discutir.\n\nPoco a poco, el grupo recuperó la tranquilidad y comprendió que era mejor trabajar unidos que competir o enfrentarse. Al final, todos lograron ponerse de acuerdo y continuar con la actividad.\n\nEsta experiencia nos enseñó que el liderazgo no significa dar órdenes, sino tener la capacidad de mantener la calma, escuchar a los demás y ayudar a resolver los conflictos. También nos demostró que la paz se construye con respeto, diálogo y trabajo en equipo.",
+                image: "img/Imagen4.png"
+            },
+            {
+                name: "Brandon Stiven Marín Ospina",
+                formation: "Automotriz",
+                title: "Las paces también se construyen compartiendo",
+                story: "Un puesto de comida en la calle puede convertirse en un lugar de encuentro para la comunidad, donde las personas no solo llegan a comprar, sino también a compartir momentos y relacionarse con los demás. Estos espacios permiten conocer diferentes personas, intercambiar experiencias y fortalecer la convivencia.\n\nA través de un negocio como este se generan oportunidades de empleo, apoyo a las familias y unión entre vecinos. De esta manera, con el respeto, la amabilidad, la colaboración y el trabajo honesto, podemos construir paces desde las pequeñas acciones de nuestra vida cotidiana.",
+                image: "img/Imagen5.png"
+            },
+            {
+                name: "Federico Palacio",
+                formation: "Automotriz",
+                title: "Un puesto de comida callejera: un espacio para construir paz",
+                story: "En la imagen podemos observar un grupo de personas reunidas alrededor de un puesto de comida callejera. Este tipo de espacios, aunque parecen cotidianos, pueden convertirse en lugares donde se construye paz, porque permiten que personas diferentes compartan, conversen y se relacionen en un ambiente de respeto y tranquilidad.\n\nUn puesto de comida no solamente representa una oportunidad para generar ingresos y ayudar al sustento de una familia, sino que también crea comunidad. A través de la compra y venta de alimentos se generan relaciones entre vendedores, estudiantes y ciudadanos, se apoya el trabajo de otras personas y se fortalecen valores como la solidaridad, la empatía y la colaboración.\n\nConsidero que construir paz también está en estas pequeñas acciones de la vida diaria: apoyar a los trabajadores informales, tratar bien a los demás, respetar las diferencias y compartir con otras personas. Así, un simple puesto de comida callejera puede convertirse en un punto de encuentro donde nacen amistades, oportunidades y una mejor convivencia social.",
+                image: "img/Imagen6.jpg"
+            },
+            {
+                name: "Luis Miguel Restrepo",
+                formation: "Sistemas Integrados de Gestión",
+                title: "Forjando Nuevos Comienzos",
+                story: "En este ambiente de soldadura, donde el metal se moldea, se realizan uniones y se transforman ideas, cada día surgen nuevas oportunidades. Más allá de las herramientas, encontramos las habilidades, la paciencia y la precisión de quienes aprenden. Hay historias de vida que se transforman con esta labor diaria, demostrando que la confianza, la perseverancia y la valentía pueden convertirse en instrumentos más poderosos que los propios hornos.\n\nEn los procesos de resocialización y reintegración social, también se construye con el alma y el corazón. Es aquí donde los productos cuentan su historia y el metal adquiere un verdadero valor: cuando contribuye a construir un futuro diferente.\n\nPORQUE LA PAZ TAMBIÉN SE CONSTRUYE CUANDO UNA SOCIEDAD OFRECE OPORTUNIDADES PARA APRENDER, CAMBIAR Y VOLVER A EMPEZAR.",
+                image: "img/Imagen7.png"
+            },
+            {
+                name: "Ana Sofia Velazco Agudelo",
+                formation: "Dibujo Modelado y arquitectonico",
+                title: "En la diferencia florece la paz",
+                story: "La paz no llega haciendo ruido, crece como algo silencioso en los pequeños encuentros del día a día y en las manos que se unen para crear juntas un lugar donde florecer.\n\nCada mente es un universo diferente, con distintas formas de vivir, pensar y distintos talentos, es en esa diversidad donde reside nuestra riqueza, todo lo que podemos aprender a través del otro y lo que juntos somos capaces de lograr.\n\nConstruir paz no se trata de encontrar personas que se parezcan a nosotros, sino aprender a explotar el potencial de cada persona y caminar al lado de quienes nos muestran otras formas de ver el mundo. Es ahí donde descubrimos que nuestras diferencias son raíces, no fronteras.",
+                image: "img/Imagen8.jpg"
+            },
+            {
+                name: "Diego Alejandro Arboleda",
+                formation: "Análisis y Desarrollo de Software",
+                title: "Un refugio en la llovizna",
+                story: "Eran las 3:37 de la tarde de un viernes. Desde muy temprano el día estuvo acompañado de diversas lloviznas y de un ambiente muy frío; sin embargo, en ese momento y en ese lugar, la frialdad desaparecía.\n\nEn ese receso, pequeño pero significativo, existía una pausa que el clima no podía modificar: el placer de compartir con compañeros con los cuales se tiene un objetivo en común. Distintas realidades y distintos orígenes coincidían en aquella tarde gris para intercambiar experiencias, pensamientos y vivencias. Más allá de la relación de aprendices que los unía, en ese instante bajo las sombrillas, no importaba nada más.\n\nAunque todos viven una realidad distinta fuera de ese lugar, y al acabar la jornada cada quien vuelve a sus quehaceres, ese momento les permite disfrutar de una tranquilidad y armonía que por fuera a veces no tienen. Ese espacio les permite vivir las experiencias de los otros; en ese momento, las diferencias se desvanecen y, simplemente, somos nosotros.",
+                image: "img/Imagen9.png"
+            },
+            {
+                name: "Sebastián Camilo Uribe",
+                formation: "Electricidad Industrial",
+                title: "El Poder de la Unión",
+                story: "El sol iluminaba el centro de formación mientras la actividad avanzaba. El salón se había dividido en dos grupos: uno ya había terminado, mientras el otro aún tenía trabajo por hacer. Sin dudarlo, quienes habían finalizado se acercaron a ayudar a sus compañeros.\n\nEntre risas, esfuerzo y colaboración, ambos grupos trabajaron unidos hasta alcanzar el objetivo. Porque el compañerismo no consiste en terminar primero, sino en entender que los logros son más valiosos cuando nadie se queda atrás.",
+                image: "img/Imagen10.jpg"
+            },
+            {
+                name: "Brahian García Marín",
+                formation: "Automotriz",
+                title: "La ley de Murphy",
+                story: "Para avanzar hacia el futuro no podemos ignorar el camino recorrido. Como el espejo retrovisor que nos permite ver lo que queda atrás sin detener nuestra marcha, el verdadero proceso de reconciliación en el SENA nos invita a mirar los conflictos del pasado no para quedarnos atrapados en ellos, sino para transitar con madurez hacia la convivencia. Romper las rejas de los prejuicios y limpiar la mirada es el primer paso para construir una comunidad en paz.",
+                image: "img/Imagen11.jpg"
+            },
+            {
+                name: "Maria José",
+                formation: "Dibujo Modelado y arquitectonico",
+                title: "Un lugar para compartir también es un lugar para construir paz",
+                story: "Era una mañana soleada y varios jóvenes se encontraban reunidos alrededor de una mesa, bajo unas grandes sombrillas. En aquel espacio, rodeado de zonas verdes y edificios, compartían un momento de descanso, conversaban y disfrutaban de la compañía de los demás.\n\nAlgunos hablaban mientras otros escuchaban. Aunque cada uno podía tener preocupaciones o dificultades personales, ese momento les permitía sentirse acompañados y olvidar por un instante sus problemas. A veces, una conversación, una sonrisa o simplemente compartir con alguien puede hacer una gran diferencia.\n\nEsta fotografía nos muestra que la construcción de paz también comienza con acciones sencillas. Compartir con los demás, escuchar y brindar compañía ayuda a crear espacios más seguros y tranquilos, donde todos puedan sentirse aceptados e incluidos.\n\nPorque construir paz no siempre requiere grandes acciones; muchas veces comienza con algo tan simple como sentarse junto a alguien y hacerle sentir que no está solo.",
+                image: "img/Imagen12.jpg"
+            },
+            {
+                name: "Natalia Agudelo",
+                formation: "Formación Institucional",
+                title: "Nadie necesita sentirse más grande haciendo sentir pequeño a otro",
+                story: "Para mí, construir paz va mucho más allá: empieza en la manera en que tratamos a las personas, en cómo nos dirigimos a los demás y en la capacidad que tenemos de entender que cada compañero carga consigo una historia, unas dificultades, unos sueños y una forma diferente de ver la vida.\n\nCreo que uno de los valores más importantes para construir una comunidad en paz es la empatía. A veces nos acostumbramos tanto a mirar nuestras propias necesidades que olvidamos que al lado nuestro hay alguien que también merece ser escuchado, comprendido y respetado. No siempre tenemos que estar de acuerdo con los demás, pero sí tenemos la responsabilidad de aprender a respetar sus opiniones, sus diferencias y su dignidad.\n\nTambién considero importante entender que ningún cargo, conocimiento o posición nos hace superiores a otra persona. Tener autoridad no significa tener derecho a pasar por encima de los demás, imponer nuestras ideas, humillar o hacer sentir menos a alguien. Al contrario, entre más responsabilidad tengamos, más humildad y respeto deberíamos demostrar. Porque el verdadero liderazgo no se mide por el poder que tenemos sobre otros, sino por la manera en que somos capaces de orientar, escuchar y aportar sin hacer sentir pequeño a nadie.\n\nEn el centro compartimos espacios con personas de diferentes edades, pensamientos, costumbres y experiencias. Precisamente ahí está la oportunidad de aprender que la convivencia no consiste en pensar igual, sino en encontrar la manera de caminar juntos a pesar de nuestras diferencias. Una palabra puede motivar, pero también puede herir; un gesto puede hacer sentir bienvenida a una persona o hacerla sentir excluida. Por eso, debemos ser más conscientes de lo que decimos y hacemos.\n\nPara mí, la paz no se construye únicamente con grandes acciones ni con discursos bonitos. Se construye en lo cotidiano: cuando escuchamos antes de juzgar, cuando reconocemos nuestros errores, cuando ofrecemos una disculpa sincera, cuando no utilizamos nuestras posiciones para intimidar y cuando elegimos tratar a los demás con la misma dignidad con la que esperamos ser tratados.\n\nAl final, todos estamos aquí para aprender, crecer y convertirnos en mejores personas y profesionales. Y ojalá no nos llevemos del centro solamente conocimientos para desempeñarnos en un trabajo, sino también lecciones para la vida: que nunca se nos olvide ser humanos, que el respeto no se negocia y que nadie necesita sentirse más grande haciendo sentir pequeño a otro.\n\nPorque construir paz es entender que podemos tener diferentes opiniones, diferentes responsabilidades y diferentes caminos, pero nunca debemos olvidar que todos merecemos el mismo respeto.",
+                image: "img/Imagen13.jpg"
+            },
+            {
+                name: "Viviana Cardona",
+                formation: "Análisis y Desarrollo de Software",
+                title: "Cereza",
+                story: "Construir la paz no es solo firmar acuerdos en grandes salones; es, sobre todo, un acto íntimo y valiente. Es el proceso silencioso de sanar las propias heridas, de soltar las cargas del pasado y mirar al compañero de al lado no con desconfianza, sino con la certeza de que compartimos las mismas búsquedas, los mismos sueños y los mismos miedos.\n\nEn medio de esteras, arte y momentos de profunda reflexión, estos jóvenes rostros reflejan la transformación de Colombia. Son manos que aprenden a programar, a diseñar, a crear con la técnica, pero que hoy, en este círculo, aprenden lo más difícil y hermoso: a habitar la empatía. Cada respiración compartida es una tregua firmada con la vida, un recordatorio de que la paz verdadera germina primero en el corazón de quienes se atreven a mirar hacia su interior para luego abrazar al mundo.\n\nPorque cuando un joven aprende a encontrarse en paz consigo mismo, se convierte en la semilla viva de un futuro donde el diálogo y la esperanza son, por fin, nuestra única revolución.",
+                image: "img/Imagen14.jpg"
+            }
+        ];
+
+        let currentIndex = 0;
+
+        function renderSlide() {
+            const slide = slides[currentIndex];
+            document.getElementById('slide-image').src = slide.image;
+            document.getElementById('slide-image').onerror = function () {
+                this.src = 'paces1.jpg'; // Imagen de respaldo si no carga la específica
+            };
+            document.getElementById('slide-formation').textContent = slide.formation;
+            document.getElementById('slide-title').textContent = slide.title;
+            document.getElementById('slide-author').textContent = `Por: ${slide.name}`;
+            document.getElementById('slide-story').textContent = slide.story;
+            document.getElementById('slide-counter').textContent = `${currentIndex + 1} / ${slides.length}`;
+
+            // Update dots
+            const dotsContainer = document.getElementById('dots-container');
+            if (dotsContainer) {
+                dotsContainer.innerHTML = '';
+                slides.forEach((_, idx) => {
+                    const dot = document.createElement('button');
+                    dot.className = `h-2.5 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-8 bg-emerald-500' : 'w-2.5 bg-slate-700 hover:bg-slate-600'}`;
+                    dot.onclick = () => { currentIndex = idx; renderSlide(); };
+                    dotsContainer.appendChild(dot);
+                });
+            }
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % slides.length;
+            renderSlide();
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+            renderSlide();
+        }
+
+        // Initialize
+        renderSlide();
+    </script>
+</body>
+
+</html>
